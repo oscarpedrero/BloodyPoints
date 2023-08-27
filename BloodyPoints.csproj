@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<AssemblyName>BloodyPoints</AssemblyName>
-		<Description>Mod so that waypoints can be created for both players and administrators</Description>
+		<Description>Mod so that personal or global waypoints can be created.</Description>
 		<Version>1.0.0</Version>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<LangVersion>latest</LangVersion>

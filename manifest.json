@@ -1,7 +1,7 @@
 ﻿{
   "name": "BloodyPoint",
   "version_number": "1.0.0",
-  "website_url": "https://github.com/oscarpedrero/BloodyShop",
+  "website_url": "https://github.com/oscarpedrero/BloodyPoints",
   "description": "Mod so that personal or global waypoints can be created",
   "dependencies": [
     "BepInEx-BepInExPack_V_Rising-1.668.5",

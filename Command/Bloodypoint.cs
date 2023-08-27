@@ -54,7 +54,7 @@ namespace BloodyPoints.Command
             throw ctx.Error($"Cant find Teleport name {name}!");
         }
 
-        [Command(name: "teleportplayer", shortHand: "tpp", adminOnly: true, usage: "<Name> <PlayerName>", description: "Teleports you to the specific waypoint.")]
+        [Command(name: "teleportplayer", shortHand: "tpp", adminOnly: true, usage: "<Name> <PlayerName>", description: "Teleports player to the specific waypoint. If we type \"all\" instead of the player's name it will teleport all online players to the specified point.")]
         public static void WaypointPlayerCommand(ChatCommandContext ctx, string name, string PlayerName)
         {
             if(PlayerName == "all")
