@@ -6,6 +6,8 @@
 `1.0.0`
 - First Release
 
+
+
 ## Configuration
 
 Once the mod is installed, a configuration file will be created in the server folder \BepInEx\config where you can configure the maximum number of waypoints per user allowed
