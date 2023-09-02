@@ -6,6 +6,9 @@ If you had the previous version installed, you must delete the configuration fil
 <summary>Changelog</summary>
 
 `1.0.2`
+- Fixed README
+
+`1.0.2`
 - Fix problem with config files when init first time mod
 
 `1.0.0`
@@ -43,11 +46,11 @@ Waypoint Limit = 1
 | `.help bp`                                   | Command that returns all available commands    
 | `.bp wpg <Name>` (Only Admins)                   | Creates the specified global waypoint.
 | `.bp rmg <Name>` (Only Admins)   | Removes the specified global waypoint.
-| `.bg tpp <Name> <PlayerName/all>` (Only Admins)  | Teleports player to the specific waypoint. If we type "all" instead of the player's name it will teleport all online players to the specified point.
-| `.bg wp <Name>`  | Creates the specified personal waypoint.
-| `.bg rm <Name>`  | Removes the specified personal waypoint.
-| `.bg tp <Name>`  | Teleports you to the specific waypoint.
-| `.bg l `  | Lists waypoints available to you
+| `.bp tpp <Name> <PlayerName/all>` (Only Admins)  | Teleports player to the specific waypoint. If we type "all" instead of the player's name it will teleport all online players to the specified point.
+| `.bp wp <Name>`  | Creates the specified personal waypoint.
+| `.bp rm <Name>`  | Removes the specified personal waypoint.
+| `.bp tp <Name>`  | Teleports you to the specific waypoint.
+| `.bp l `  | Lists waypoints available to you
 
 ## Credits
 
