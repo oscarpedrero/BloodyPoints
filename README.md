@@ -1,15 +1,18 @@
 # BloodyPoints Mod so that personal or global waypoints can be created
 
+If you had the previous version installed, you must delete the configuration files for the server and restart the server.
+
 <details>
 <summary>Changelog</summary>
+
+`1.0.2`
+- Fix problem with config files when init first time mod
 
 `1.0.0`
 - First Release
 
 
 </details>
-
-
 
 ## Configuration
 

@@ -97,7 +97,7 @@ namespace BloodyPoints.Command
                     throw ctx.Error("Unable to use waypoint! You're in combat!");
                 }
 
-                var findName = name.ToLower() + "_" + SteamID;
+                var findName = name + "_" + SteamID;
 
                 var item = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name == name && waypoint.Owner == SteamID);
 
@@ -148,7 +148,7 @@ namespace BloodyPoints.Command
 
             float3 location = entityManager.GetComponentData<LocalToWorld>(ctx.Event.SenderCharacterEntity).Position;
             var f2_location = new float3(location.x, location.y, location.z);
-            AddWaypoint(SteamID, f2_location, name.ToLower(), false);
+            AddWaypoint(SteamID, f2_location, name, false);
             ctx.Reply("Successfully added Waypoint.");
         }
 
@@ -156,7 +156,7 @@ namespace BloodyPoints.Command
         public static void WaypointSetGlobalCommand(ChatCommandContext ctx, string name)
         {
             ulong SteamID = ctx.Event.User.PlatformId;
-            var findName = name.ToLower() + "_" + SteamID;
+            var findName = name + "_" + SteamID;
 
             var item = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name == name);
 
@@ -267,9 +267,16 @@ namespace BloodyPoints.Command
             }
 
             string json = File.ReadAllText(Plugin.WaypointsJson);
-
+            try
+            {
                 Database.waypoints = JsonSerializer.Deserialize<List<WaypointData>>(json);
                 Plugin.Logger.LogWarning("Waypoints DB Populated");
+            }
+            catch
+            {
+                Database.waypoints = new List<WaypointData>();
+                Plugin.Logger.LogWarning("Waypoints DB Created");
+            }
 
 
             if (!File.Exists(Plugin.GlobalWaypointsJson))
@@ -279,11 +286,16 @@ namespace BloodyPoints.Command
             }
 
             json = File.ReadAllText(Plugin.GlobalWaypointsJson);
-
+            try
+            {
                 Database.globalWaypoint = JsonSerializer.Deserialize<List<WaypointData>>(json);
                 Plugin.Logger.LogWarning("GlobalWaypoints DB Populated");
-
-           
+            }
+            catch
+            {
+                Database.globalWaypoint = new List<WaypointData>();
+                Plugin.Logger.LogWarning("GlobalWaypoints DB Created");
+            }
 
 
             if (!File.Exists(Plugin.TotalWaypointsJson))
@@ -293,9 +305,18 @@ namespace BloodyPoints.Command
             }
 
             json = File.ReadAllText(Plugin.TotalWaypointsJson);
-            
+            try
+            {
                 Database.waypoints_owned = JsonSerializer.Deserialize<Dictionary<ulong, int>>(json);
                 Plugin.Logger.LogWarning("TotalWaypoints DB Populated");
+            }
+            catch
+            {
+                Database.waypoints_owned = new Dictionary<ulong, int>();
+                Plugin.Logger.LogWarning("TotalWaypoints DB Created");
+            }
+
+            
             
         }
 
