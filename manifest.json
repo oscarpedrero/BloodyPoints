@@ -1,6 +1,6 @@
 ﻿{
   "name": "BloodyPoint",
-  "version_number": "1.0.2",
+  "version_number": "1.0.3",
   "website_url": "https://github.com/oscarpedrero/BloodyPoints",
   "description": "Mod so that personal or global waypoints can be created",
   "dependencies": [
