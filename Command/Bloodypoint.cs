@@ -1,7 +1,10 @@
 ﻿using Bloodstone.API;
 using Bloody.Core;
+using Bloody.Core.Helper;
+using Bloody.Core.Models;
 using BloodyPoints.DB;
 using BloodyPoints.Helpers;
+using ProjectM;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,7 +12,9 @@ using System.Text.Json;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine.TextCore.Text;
 using VampireCommandFramework;
+using static BloodyPoints.DB.Database;
 using static UnityEngine.UI.GridLayoutGroup;
 
 namespace BloodyPoints.Command
@@ -67,6 +72,15 @@ namespace BloodyPoints.Command
                         ctx.Reply($"Unable to use waypoint! {user.CharacterName} in combat!");
                     }
 
+                    UserModel userModel = Core.Users.GetUserByCharacterName(ctx.Event.User.CharacterName.Value);
+
+
+                    if (BuffUtility.TryGetBuff(Core.SystemsCore.EntityManager, user.Character.Entity, Prefabs.AB_Shapeshift_Bat_TakeFlight_Buff, out Entity buffEntity))
+                    {
+                        throw ctx.Error($"You cannot create a waypoint while flying");
+                    }
+
+
                     var item = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name == name);
 
                     if (item != null)
@@ -94,6 +108,12 @@ namespace BloodyPoints.Command
                     throw ctx.Error("Unable to use waypoint! You're in combat!");
                 }
 
+
+                if (BuffUtility.TryGetBuff(Core.SystemsCore.EntityManager, user.Character.Entity, Prefabs.AB_Shapeshift_Bat_TakeFlight_Buff, out Entity buffEntity))
+                {
+                    throw ctx.Error($"You cannot create a waypoint while flying");
+                }
+
                 var findName = name + "_" + SteamID;
 
                 var item = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name == name && waypoint.Owner == SteamID);
@@ -119,7 +139,15 @@ namespace BloodyPoints.Command
         [Command(name: "waypoint", shortHand: "wp", adminOnly: false, usage: "<Name>", description: "Creates the specified personal waypoint")]
         public static void WaypointSetCommand(ChatCommandContext ctx, string name)
         {
+
             ulong SteamID = ctx.Event.User.PlatformId;
+
+            UserModel userModel = Core.Users.GetUserByCharacterName(ctx.Event.User.CharacterName.Value);
+
+            if (BuffUtility.TryGetBuff(Core.SystemsCore.EntityManager, userModel.Character.Entity, Prefabs.AB_Shapeshift_Bat_TakeFlight_Buff, out Entity buffEntity))
+            {
+                throw ctx.Error($"You cannot create a waypoint while flying");
+            }
 
             if (Database.waypoints_owned.TryGetValue(SteamID, out var total) && !ctx.Event.User.IsAdmin && total >= WaypointLimit)
             {
@@ -152,6 +180,15 @@ namespace BloodyPoints.Command
         [Command(name: "waypointglobal", shortHand: "wpg", adminOnly: true, usage: "<Name>", description: "Creates the specified global waypoint")]
         public static void WaypointSetGlobalCommand(ChatCommandContext ctx, string name)
         {
+
+            UserModel userModel = Core.Users.GetUserByCharacterName(ctx.Event.User.CharacterName.Value);
+
+
+            if (BuffUtility.TryGetBuff(Core.SystemsCore.EntityManager, userModel.Character.Entity, Prefabs.AB_Shapeshift_Bat_TakeFlight_Buff, out Entity buffEntity))
+            {
+                throw ctx.Error($"You cannot create a waypoint while flying");
+            }
+
             ulong SteamID = ctx.Event.User.PlatformId;
             var findName = name + "_" + SteamID;
 

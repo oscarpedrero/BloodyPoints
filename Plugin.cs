@@ -18,6 +18,7 @@ namespace BloodyPoints
     [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     [BepInDependency("gg.deca.Bloodstone")]
     [BepInDependency("gg.deca.VampireCommandFramework")]
+    [Bloodstone.API.Reloadable]
     public class Plugin : BasePlugin, IRunOnInitialized
     {
 
@@ -82,9 +83,12 @@ namespace BloodyPoints
 
         public override bool Unload()
         {
+            CommandRegistry.UnregisterAssembly();
             Bloodypoint.SaveWaypoints();
             Config.Clear();
             harmony.UnpatchSelf();
+            EventsHandlerSystem.OnInitialize -= GameDataOnInitialize;
+            EventsHandlerSystem.OnDestroy -= GameDataOnDestroy;
             return true;
         }
 
