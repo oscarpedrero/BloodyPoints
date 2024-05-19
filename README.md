@@ -6,7 +6,7 @@ If you had the previous version installed, you must delete the configuration fil
 <summary>Changelog</summary>
 
 `2.0.0`
-- Fixed README
+- Updated to VRISING 1.0
 
 `1.0.2`
 - Fixed README
