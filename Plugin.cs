@@ -8,9 +8,10 @@ using System.IO;
 using VampireCommandFramework;
 using System.Reflection;
 using BloodyPoints.Command;
-using VRising.GameData;
 using Unity.Entities;
 using System;
+using Bloody.Core;
+using Bloody.Core.API;
 
 namespace BloodyPoints
 {
@@ -41,8 +42,8 @@ namespace BloodyPoints
             CommandRegistry.RegisterAll();
             harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
-            GameData.OnInitialize += GameDataOnInitialize;
-            GameData.OnDestroy += GameDataOnDestroy;
+            EventsHandlerSystem.OnInitialize += GameDataOnInitialize;
+            EventsHandlerSystem.OnDestroy += GameDataOnDestroy;
 
             if (!VWorld.IsServer)
             {

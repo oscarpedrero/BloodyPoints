@@ -5,6 +5,9 @@ If you had the previous version installed, you must delete the configuration fil
 <details>
 <summary>Changelog</summary>
 
+`2.0.0`
+- Fixed README
+
 `1.0.2`
 - Fixed README
 

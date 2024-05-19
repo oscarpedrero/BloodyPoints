@@ -1,18 +1,15 @@
 ﻿using Bloodstone.API;
+using Bloody.Core;
 using BloodyPoints.DB;
 using BloodyPoints.Helpers;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using VampireCommandFramework;
-using VRising.GameData;
 using static UnityEngine.UI.GridLayoutGroup;
 
 namespace BloodyPoints.Command
@@ -59,7 +56,7 @@ namespace BloodyPoints.Command
         {
             if(PlayerName == "all")
             {
-                var users = GameData.Users.Online;
+                var users = Core.Users.Online;
 
                 foreach(var user in users)
                 {
@@ -89,7 +86,7 @@ namespace BloodyPoints.Command
 
             } else
             {
-                var user = GameData.Users.GetUserByCharacterName(PlayerName);
+                var user = Core.Users.GetUserByCharacterName(PlayerName);
                 var PlayerEntity = user.Character.Entity;
                 var SteamID = ctx.Event.User.PlatformId;
                 if (Helper.IsPlayerInCombat(PlayerEntity))
