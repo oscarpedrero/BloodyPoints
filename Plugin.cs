@@ -11,13 +11,14 @@ using BloodyPoints.Command;
 using Unity.Entities;
 using System;
 using Bloody.Core;
-using Bloody.Core.API;
+using Bloody.Core.API.v1;
 
 namespace BloodyPoints
 {
     [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     [BepInDependency("gg.deca.Bloodstone")]
     [BepInDependency("gg.deca.VampireCommandFramework")]
+    [BepInDependency("trodi.Bloody.Core")]
     [Bloodstone.API.Reloadable]
     public class Plugin : BasePlugin, IRunOnInitialized
     {
@@ -33,11 +34,13 @@ namespace BloodyPoints
 
         private static ConfigEntry<int> WaypointLimit;
 
+        public static ConfigEntry<bool> DraculaRoom { get; private set; }
+
         public static ManualLogSource Logger;
 
         public override void Load()
         {
-            
+
             Instance = this;
             Logger = Log;
             CommandRegistry.RegisterAll();
@@ -45,8 +48,9 @@ namespace BloodyPoints
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             EventsHandlerSystem.OnInitialize += GameDataOnInitialize;
             EventsHandlerSystem.OnDestroy += GameDataOnDestroy;
+            EventsHandlerSystem.OnSaveWorld += SaveWorldInvoke;
 
-            if (!VWorld.IsServer)
+            if (!Core.IsServer)
             {
                 Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is only for server!");
                 return;
@@ -56,6 +60,11 @@ namespace BloodyPoints
             
             // Plugin startup logic
             Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
+        }
+
+        private void SaveWorldInvoke()
+        {
+            Bloodypoint.SaveWaypoints();
         }
 
         private void GameDataOnDestroy()
@@ -72,6 +81,7 @@ namespace BloodyPoints
         public void InitConfig()
         {
             WaypointLimit = Config.Bind("Config", "Waypoint Limit", 1, "Set a waypoint limit per user.");
+            DraculaRoom = Config.Bind("Config", "Dracula Room", false, "Allows you to create waypoints in Dracula's room.");
 
             if (!Directory.Exists(ConfigPath)) Directory.CreateDirectory(ConfigPath);
         }
@@ -79,6 +89,7 @@ namespace BloodyPoints
         public static void Initialize()
         {
             Bloodypoint.WaypointLimit = WaypointLimit.Value;
+            Bloodypoint.DraculaRoom = DraculaRoom.Value;
         }
 
         public override bool Unload()
@@ -89,6 +100,7 @@ namespace BloodyPoints
             harmony.UnpatchSelf();
             EventsHandlerSystem.OnInitialize -= GameDataOnInitialize;
             EventsHandlerSystem.OnDestroy -= GameDataOnDestroy;
+            EventsHandlerSystem.OnSaveWorld -= SaveWorldInvoke;
             return true;
         }
 

@@ -42,5 +42,20 @@ namespace BloodyPoints.Helpers
                 Target = PlayerTeleportDebugEvent.TeleportTarget.Self
             });
         }
+
+        public static bool checkDracualaRoom(WaypointData wp)
+        {
+            if((wp.X == 18 || wp.X == 19 ) && wp.Y == 16)
+            {
+                return true;
+            }
+
+            if ((wp.Y == 1 || wp.Y == 2) && wp.X == 24)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

@@ -2,8 +2,22 @@
 
 If you had the previous version installed, you must delete the configuration files for the server and restart the server.
 
+## Requirements:
+
+For the correct functioning of this mod you must have the following dependencies installed on your server:
+
+1. [BepInEx](https://github.com/BepInEx/BepInEx)
+2. [VampireCommandFramework](https://github.com/decaprime/VampireCommandFramework)
+3. [Bloodstone](https://github.com/decaprime/Bloodstone)
+3. [Bloody.Core](https://github.com/oscarpedrero/BloodyCore)
+
+
 <details>
 <summary>Changelog</summary>
+
+`2.0.2`
+- Bloody.Core dependency removed as dll and added as framework
+- Added parameter in the mod configuration to avoid creating or teleporting to Dracula's room
 
 `2.0.0`
 - Updated to VRISING 1.0

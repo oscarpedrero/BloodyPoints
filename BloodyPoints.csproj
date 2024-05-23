@@ -3,7 +3,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<AssemblyName>BloodyPoints</AssemblyName>
 		<Description>Mod so that personal or global waypoints can be created.</Description>
-		<Version>2.0.1</Version>
+		<Version>2.0.2</Version>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
@@ -15,24 +15,15 @@
 		<PackageReference Include="VRising.Unhollowed.Client" Version="1.0.0.*" />
 		<PackageReference Include="VRising.VampireCommandFramework" Version="0.8.*" />
 		<PackageReference Include="VRising.Bloodstone" Version="0.1.*" />
-		<PackageReference Include="Costura.Fody" Version="5.7.0">
-			<!--<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>-->
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-		<PackageReference Include="Fody" Version="6.8.0">
-			<!-- <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets> -->
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
+		<PackageReference Include="Bloody.Core" Version="1.2.*" />
 	</ItemGroup>
 	<ItemGroup>
-		<Reference Include="Bloody.Core">
-			<HintPath>Bloody.Core.dll</HintPath>
-			<Private>true</Private>
-		</Reference>
+	  <Folder Include="Patch\" />
 	</ItemGroup>
 	<Target Name="CopyDLLsServer" AfterTargets="Build">
 		<Message Text="DLL to V Rising Server" Importance="High" />
-		<Copy SourceFiles="$(TargetDir)$(ProjectName).dll" DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\VRising\VRising_Server\BepInEx\plugins\" />
+		<Copy SourceFiles="$(TargetDir)$(ProjectName).dll" DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\VRising\VRising_Server\BepInEx\plugins\" /> 
+		<!--<Copy SourceFiles="$(TargetDir)$(ProjectName).dll" DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\VRising\VRising_Server\BepInEx\BloodstonePlugins\" />-->
 		<Message Text="DLL Server Copied OK" Importance="High" />
 	</Target>
 </Project>
