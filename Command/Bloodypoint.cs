@@ -45,6 +45,16 @@ namespace BloodyPoints.Command
         [Command(name: "teleport", shortHand: "tp", adminOnly: false, usage: "<Name>", description: "Teleports you to the specific waypoint.")]
         public static void WaypoinCommand(ChatCommandContext ctx, string name)
         {
+            
+            if (!DraculaRoom)
+            {
+                float3 locationUser = entityManager.GetComponentData<LocalToWorld>(ctx.Event.SenderCharacterEntity).Position;
+                var wpDracula = new WaypointData("test",12345678901234567890, locationUser.x, locationUser.y, locationUser.z);
+                if (Helper.checkDracualaRoom(wpDracula))
+                {
+                    throw ctx.Error($"You can't teleport from Dracula's room!");
+                }
+            }
             var PlayerEntity = ctx.Event.SenderCharacterEntity;
             var SteamID = ctx.Event.User.PlatformId;
             if (Helper.IsPlayerInCombat(PlayerEntity))
@@ -88,7 +98,18 @@ namespace BloodyPoints.Command
         [Command(name: "teleportplayer", shortHand: "tpp", adminOnly: true, usage: "<Name> <PlayerName>", description: "Teleports player to the specific waypoint. If we type \"all\" instead of the player's name it will teleport all online players to the specified point.")]
         public static void WaypointPlayerCommand(ChatCommandContext ctx, string name, string PlayerName)
         {
-            if(PlayerName == "all")
+
+            if (!DraculaRoom)
+            {
+                float3 locationUser = entityManager.GetComponentData<LocalToWorld>(ctx.Event.SenderCharacterEntity).Position;
+                var wpDracula = new WaypointData("test", 12345678901234567890, locationUser.x, locationUser.y, locationUser.z);
+                if (Helper.checkDracualaRoom(wpDracula))
+                {
+                    throw ctx.Error($"You can't teleport from Dracula's room!");
+                }
+            }
+
+            if (PlayerName == "all")
             {
                 var users = GameData.Users.Online;
 
