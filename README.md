@@ -1,3 +1,5 @@
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K8ENRQY)
+
 # BloodyPoints Mod so that personal or global waypoints can be created
 
 If you had the previous version installed, you must delete the configuration files for the server and restart the server.
