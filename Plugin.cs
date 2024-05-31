@@ -34,7 +34,9 @@ namespace BloodyPoints
 
         private static ConfigEntry<int> WaypointLimit;
 
+        public static ConfigEntry<bool> InCombat { get; private set; }
         public static ConfigEntry<bool> DraculaRoom { get; private set; }
+        public static ConfigEntry<int> CoolDown { get; private set; }
 
         public static ManualLogSource Logger;
 
@@ -81,7 +83,9 @@ namespace BloodyPoints
         public void InitConfig()
         {
             WaypointLimit = Config.Bind("Config", "Waypoint Limit", 1, "Set a waypoint limit per user.");
-            DraculaRoom = Config.Bind("Config", "Dracula Room", false, "Allows you to create waypoints in Dracula's room.");
+            InCombat = Config.Bind("Config", "In Combat", true, "Allows tp to be used when a player is in combat");
+            DraculaRoom = Config.Bind("Config", "Dracula Room", false, "Allows you to create waypoints or tp from Dracula's room");
+            CoolDown = Config.Bind("Config", "CoolDown", 20, "Time in seconds for teleportation to cooldown");
 
             if (!Directory.Exists(ConfigPath)) Directory.CreateDirectory(ConfigPath);
         }

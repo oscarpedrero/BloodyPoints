@@ -1,11 +1,13 @@
 ﻿using Bloodstone.API;
 using Bloody.Core;
+using Bloody.Core.API.v1;
 using Bloody.Core.GameData.v1;
 using Bloody.Core.Helper.v1;
 using Bloody.Core.Models.v1;
 using BloodyPoints.DB;
 using BloodyPoints.Helpers;
 using ProjectM;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,7 +20,7 @@ using VampireCommandFramework;
 namespace BloodyPoints.Command
 {
 
-    [CommandGroup(name: "bloodypoint", shortHand: "bp")]
+    [CommandGroup(name: "bloodypoint", shortHand: "blp")]
     internal class Bloodypoint
     {
         public static int WaypointLimit = 3;
@@ -45,6 +47,11 @@ namespace BloodyPoints.Command
         [Command(name: "teleport", shortHand: "tp", adminOnly: false, usage: "<Name>", description: "Teleports you to the specific waypoint.")]
         public static void WaypoinCommand(ChatCommandContext ctx, string name)
         {
+
+            var PlayerEntity = ctx.Event.SenderCharacterEntity;
+            var SteamID = ctx.Event.User.PlatformId;
+
+            
             
             if (!DraculaRoom)
             {
@@ -55,12 +62,15 @@ namespace BloodyPoints.Command
                     throw ctx.Error($"You can't teleport from Dracula's room!");
                 }
             }
-            var PlayerEntity = ctx.Event.SenderCharacterEntity;
-            var SteamID = ctx.Event.User.PlatformId;
-            if (Helper.IsPlayerInCombat(PlayerEntity))
+
+            if (Plugin.InCombat.Value)
             {
-                throw ctx.Error("Unable to use waypoint! You're in combat!");
+                if (Helper.IsPlayerInCombat(PlayerEntity))
+                {
+                    throw ctx.Error("Unable to use waypoint! You're in combat!");
+                }
             }
+            
 
             var wp = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name == name);
 
@@ -72,6 +82,10 @@ namespace BloodyPoints.Command
                     {
                         throw ctx.Error($"You can't teleport to Dracula's room!");
                     }
+                }
+                if (!Database.TryCoolDownTP(SteamID, out double seconds))
+                {
+                    throw ctx.Error($"Unable to use waypoint! You must wait {FontColorChatSystem.Green((Plugin.CoolDown.Value - Convert.ToInt32(seconds)).ToString())} seconds for your next tp!");
                 }
                 Helper.TeleportTo(ctx.Event.SenderUserEntity, PlayerEntity, wp.getLocation());
                 return;
@@ -87,6 +101,10 @@ namespace BloodyPoints.Command
                     {
                         throw ctx.Error($"You can't teleport to Dracula's room!");
                     }
+                }
+                if (!Database.TryCoolDownTP(SteamID, out double seconds))
+                {
+                    throw ctx.Error($"Unable to use waypoint! You must wait {FontColorChatSystem.Green((Plugin.CoolDown.Value - Convert.ToInt32(seconds)).ToString())} seconds for your next tp!");
                 }
                 Helper.TeleportTo(ctx.Event.SenderUserEntity, PlayerEntity, wp.getLocation());
                 return;
@@ -117,9 +135,12 @@ namespace BloodyPoints.Command
                 {
                     var PlayerEntity = user.Character.Entity;
                     var SteamID = ctx.Event.User.PlatformId;
-                    if (Helper.IsPlayerInCombat(PlayerEntity))
+                    if (Plugin.InCombat.Value)
                     {
-                        ctx.Reply($"Unable to use waypoint! {user.CharacterName} in combat!");
+                        if (Helper.IsPlayerInCombat(PlayerEntity))
+                        {
+                            throw ctx.Error($"Unable to use waypoint! {user.CharacterName} in combat!");
+                        }
                     }
 
                     UserModel userModel = GameData.Users.GetUserByCharacterName(ctx.Event.User.CharacterName.Value);
@@ -167,9 +188,13 @@ namespace BloodyPoints.Command
                 var user = GameData.Users.GetUserByCharacterName(PlayerName);
                 var PlayerEntity = user.Character.Entity;
                 var SteamID = ctx.Event.User.PlatformId;
-                if (Helper.IsPlayerInCombat(PlayerEntity))
+
+                if (Plugin.InCombat.Value)
                 {
-                    throw ctx.Error("Unable to use waypoint! You're in combat!");
+                    if (Helper.IsPlayerInCombat(PlayerEntity))
+                    {
+                        throw ctx.Error($"Unable to use waypoint! {user.CharacterName} in combat!");
+                    }
                 }
 
 

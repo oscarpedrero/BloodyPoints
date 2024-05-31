@@ -1,12 +1,9 @@
-﻿using ProjectM;
+﻿using Bloody.Core.Helper.v1;
 using Stunlock.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace BloodyPoints.DB
 {
@@ -28,11 +25,36 @@ namespace BloodyPoints.DB
         public static List<WaypointData> globalWaypoint { get; set; }
         public static List<WaypointData> waypoints { get; set; }
         public static Dictionary<ulong, int> waypoints_owned { get; set; }
+        public static Dictionary<ulong, DateTime> UsersCooldown { get; set; } = new();
 
         public static class Buff
         {
-            public static PrefabGUID InCombat = new PrefabGUID(581443919);
-            public static PrefabGUID InCombat_PvP = new PrefabGUID(697095869);
+            public static PrefabGUID InCombat = Prefabs.Buff_InCombat;
+            public static PrefabGUID InCombat_PvP = Prefabs.Buff_InCombat_PvPVampire;
         }
+
+        internal static bool TryCoolDownTP(ulong steamid, out double diffInSeconds)
+        {
+
+            if (UsersCooldown.TryGetValue(steamid, out DateTime playerCoolDown))
+            {
+                diffInSeconds = (DateTime.Now - playerCoolDown ).TotalSeconds;
+                if (diffInSeconds >= Plugin.CoolDown.Value)
+                {
+                    diffInSeconds = 0;
+                    UsersCooldown[steamid] = DateTime.Now;
+                    return true;
+                }
+                return false;
+            } else
+            {
+                diffInSeconds = 0;
+                UsersCooldown[steamid] = DateTime.Now;
+                return true;
+            }
+            
+        }
+
+        
     }
 }
