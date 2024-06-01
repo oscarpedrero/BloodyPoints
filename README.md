@@ -2,6 +2,12 @@
 
 If you had the previous version installed, you must delete the configuration files for the server and restart the server.
 
+## NEW IN 3.0.4
+
+Now you can configure that the tp have cooldown, that they cost a specific amount of an item and you can request to tp the position of another player.
+
+Please check the mod settings and new commands for these features.
+
 # Support this project
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K8ENRQY)
@@ -18,6 +24,10 @@ For the correct functioning of this mod you must have the following dependencies
 
 <details>
 <summary>Changelog</summary>
+
+`2.0.4`
+- Added the cost option to make tp and the configuration of the PrefabGUID and its quantity.
+- Added the option to request a player to tp his position.
 
 `2.0.3`
 - Added option to the configuration file to prevent tp when a player is in combat
@@ -55,6 +65,11 @@ Once the mod is installed, a configuration file will be created in the server fo
 |Config|`In Combat`            | Allows tp to be used when a player is in combat             | true
 |Config|`Dracula Room`            | Allows you to create waypoints or tp from Dracula's room              | false
 |Config|`CoolDown`            | Time in seconds for teleportation to cooldown              | 20
+|Config|`Cost`            | Activate cost to make tp              | true
+|Config|`PrefabGUID`            | PrefabGUID that the player will have to have in the inventory to make tp              | 862477668
+|Config|`Amount`            | Amount of PrefabGUID needed to make tp              | 20
+|Config|`TeleporPlayer`            | Enable players to tp another player             | true
+|Config|`RequestTeleportPlayer`            | Activate that players must accept a tp from another player who wants to tp their position.              | true
  
  ```
 ## Settings file was created by plugin BloodyPoints v2.0.2
@@ -67,7 +82,7 @@ Once the mod is installed, a configuration file will be created in the server fo
 # Default value: 1
 Waypoint Limit = 1
 
-## Allows you to uses tp when in combat 
+## Allows tp to be used when a player is in combat
 # Setting type: Boolean
 # Default value: true
 In Combat = true
@@ -82,6 +97,30 @@ Dracula Room = false
 # Default value: 20
 CoolDown = 20
 
+## Activate cost to make tp
+# Setting type: Boolean
+# Default value: true
+Cost = true
+
+## PrefabGUID that the player will have to have in the inventory to make tp
+# Setting type: Int32
+# Default value: 862477668
+PrefabGUID = 862477668
+
+## Amount of PrefabGUID needed to make tp
+# Setting type: Int32
+# Default value: 20
+Amount = 20
+
+## Enable players to tp another player
+# Setting type: Boolean
+# Default value: true
+TeleporPlayer = true
+
+## Activate that players must accept a tp from another player who wants to tp their position.
+# Setting type: Boolean
+# Default value: true
+RequestTeleportPlayer = true
  ```
 
 ## Chat Commands
@@ -95,6 +134,8 @@ CoolDown = 20
 | `.blp wp <Name>`  | Creates the specified personal waypoint.
 | `.blp rm <Name>`  | Removes the specified personal waypoint.
 | `.blp tp <Name>`  | Teleports you to the specific waypoint.
+| `.blp tlp <Name>`  | Teleports you to the specific player.
+| `.blp tla <Name>`  | Accept teleport request from a player.
 | `.blp l `  | Lists waypoints available to you
 
 ## Credits

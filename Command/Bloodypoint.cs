@@ -16,6 +16,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using VampireCommandFramework;
+using static UnityEngine.UI.GridLayoutGroup;
 
 namespace BloodyPoints.Command
 {
@@ -28,29 +29,13 @@ namespace BloodyPoints.Command
 
         private static EntityManager entityManager = VWorld.Server.EntityManager;
 
-        /*[Command(name: "test", shortHand: "t", adminOnly: false, usage: "", description: "")]
-        public static void test(ChatCommandContext ctx)
-        {
-            var userModel = GameData.Users.GetUserByCharacterName(ctx.User.CharacterName.Value);
-
-            if (userModel.Entity.Has<CurrentMapZone>())
-            {
-                var currentMapZone = userModel.Entity.Read<CurrentMapZone>();
-                var chunWorldIndex = currentMapZone.TerrainChunk.X;
-                Plugin.Logger.LogInfo($"{currentMapZone.TerrainChunk.X} {currentMapZone.TerrainChunk.Y}");
-            } else
-            {
-                Plugin.Logger.LogInfo($"NOOOOOO");
-            }
-        }*/
-
         [Command(name: "teleport", shortHand: "tp", adminOnly: false, usage: "<Name>", description: "Teleports you to the specific waypoint.")]
         public static void WaypoinCommand(ChatCommandContext ctx, string name)
         {
 
             var PlayerEntity = ctx.Event.SenderCharacterEntity;
             var SteamID = ctx.Event.User.PlatformId;
-
+            var userModel = GameData.Users.GetUserByCharacterName(ctx.Event.User.CharacterName.Value);
             
             
             if (!DraculaRoom)
@@ -87,8 +72,25 @@ namespace BloodyPoints.Command
                 {
                     throw ctx.Error($"Unable to use waypoint! You must wait {FontColorChatSystem.Green((Plugin.CoolDown.Value - Convert.ToInt32(seconds)).ToString())} seconds for your next tp!");
                 }
-                Helper.TeleportTo(ctx.Event.SenderUserEntity, PlayerEntity, wp.getLocation());
-                return;
+
+                if (Plugin.Cost.Value)
+                {
+                    if (TTPCommands.RetriveItemsFromInventory(userModel, out string messageItem))
+                    {
+                        Helper.TeleportTo(ctx.Event.SenderUserEntity, PlayerEntity, wp.getLocation());
+                        return;
+                    }
+                    else
+                    {
+                        throw ctx.Error(messageItem);
+                    }
+                }
+                else
+                {
+                    Helper.TeleportTo(ctx.Event.SenderUserEntity, PlayerEntity, wp.getLocation());
+                    return;
+                }
+                
             }
 
             wp = Database.waypoints.FirstOrDefault(waypoint => waypoint.Name == name && waypoint.Owner == SteamID);
@@ -106,8 +108,23 @@ namespace BloodyPoints.Command
                 {
                     throw ctx.Error($"Unable to use waypoint! You must wait {FontColorChatSystem.Green((Plugin.CoolDown.Value - Convert.ToInt32(seconds)).ToString())} seconds for your next tp!");
                 }
-                Helper.TeleportTo(ctx.Event.SenderUserEntity, PlayerEntity, wp.getLocation());
-                return;
+                if (Plugin.Cost.Value)
+                {
+                    if (TTPCommands.RetriveItemsFromInventory(userModel, out string messageItem))
+                    {
+                        Helper.TeleportTo(ctx.Event.SenderUserEntity, PlayerEntity, wp.getLocation());
+                        return;
+                    }
+                    else
+                    {
+                        throw ctx.Error(messageItem);
+                    }
+                }
+                else
+                {
+                    Helper.TeleportTo(ctx.Event.SenderUserEntity, PlayerEntity, wp.getLocation());
+                    return;
+                }
             }
 
             throw ctx.Error($"Cant find Teleport name {name}!");
