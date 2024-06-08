@@ -1,15 +1,9 @@
 ﻿using Bloodstone.API;
 using ProjectM;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Unity.Entities;
 using BloodyPoints.DB;
 using ProjectM.Network;
 using Unity.Mathematics;
-using VampireCommandFramework;
 
 namespace BloodyPoints.Helpers
 {
@@ -56,6 +50,18 @@ namespace BloodyPoints.Helpers
             }
 
             return false;
+        }
+
+        public static bool DontMove(Entity userEntity, Entity charEntity)
+        {
+
+            return true;
+            
+        }
+
+        public static bool CaMove(Entity charEntity)
+        {
+            return true;
         }
     }
 }

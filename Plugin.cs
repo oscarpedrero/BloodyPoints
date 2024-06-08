@@ -40,6 +40,7 @@ namespace BloodyPoints
         public static ConfigEntry<bool> DraculaRoom { get; private set; }
         public static ConfigEntry<int> CoolDown { get; private set; }
         public static ConfigEntry<bool> Cost { get; private set; }
+        public static ConfigEntry<string> PrefabName { get; private set; }
         public static ConfigEntry<int> PrefabGUID { get; private set; }
         public static ConfigEntry<int> Amount { get; private set; }
         public static ConfigEntry<bool> TeleportPlayer { get; private set; }
@@ -101,6 +102,7 @@ namespace BloodyPoints
             DraculaRoom = Config.Bind("Config", "Dracula Room", false, "Allows you to create waypoints or tp from Dracula's room");
             CoolDown = Config.Bind("Config", "CoolDown", 20, "Time in seconds for teleportation to cooldown");
             Cost = Config.Bind("Config", "Cost", true, "Activate cost to make tp");
+            PrefabName = Config.Bind("Config", "PrefabName", "Blood Essence", "PrefabGUID that the player will have to have in the inventory to make tp");
             PrefabGUID = Config.Bind("Config", "PrefabGUID", 862477668, "PrefabGUID that the player will have to have in the inventory to make tp");
             Amount = Config.Bind("Config", "Amount", 20, "Amount of PrefabGUID needed to make tp");
             TeleportPlayer = Config.Bind("Config", "TeleporPlayer", true, "Enable players to tp another player");

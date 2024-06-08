@@ -2,7 +2,11 @@
 
 If you had the previous version installed, you must delete the configuration files for the server and restart the server.
 
-## NEW IN 3.0.4
+## IMPORTANT NOTE
+
+You must have version 1.2.4 of Bloody.Core installed to be able to use version 2.0.4 or higher of this mod
+
+## NEW IN 2.0.4
 
 Now you can configure that the tp have cooldown, that they cost a specific amount of an item and you can request to tp the position of another player.
 
@@ -24,6 +28,12 @@ For the correct functioning of this mod you must have the following dependencies
 
 <details>
 <summary>Changelog</summary>
+
+`2.0.5`
+- Updated the timer system through Coroutine that brings the new version of Bloody.Core
+- Fixed List of Waypoints
+- Fixed Remove Waypoints
+- Added animation when teleporting
 
 `2.0.4`
 - Added the cost option to make tp and the configuration of the PrefabGUID and its quantity.

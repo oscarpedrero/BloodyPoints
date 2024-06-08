@@ -57,7 +57,7 @@ namespace BloodyPoints.Command
             }
             
 
-            var wp = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name == name);
+            var wp = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name.ToLower() == name.ToLower());
 
             if (wp != null)
             {
@@ -77,7 +77,17 @@ namespace BloodyPoints.Command
                 {
                     if (TTPCommands.RetriveItemsFromInventory(userModel, out string messageItem))
                     {
-                        Helper.TeleportTo(ctx.Event.SenderUserEntity, PlayerEntity, wp.getLocation());
+                        
+                        BuffSystem.BuffPlayer(userModel.Character.Entity, ctx.Event.SenderUserEntity, Prefabs.Buff_Vampire_Dracula_BloodCurse, 5, false);
+                        Helper.DontMove(ctx.Event.SenderUserEntity, ctx.Event.SenderCharacterEntity);
+                        var action = () =>
+                        {
+                            Helper.TeleportTo(ctx.Event.SenderUserEntity, PlayerEntity, wp.getLocation());
+                            Helper.CaMove(ctx.Event.SenderCharacterEntity);
+                        };
+                        
+
+                        CoroutineHandler.StartGenericCoroutine(action, 5);
                         return;
                     }
                     else
@@ -93,7 +103,7 @@ namespace BloodyPoints.Command
                 
             }
 
-            wp = Database.waypoints.FirstOrDefault(waypoint => waypoint.Name == name && waypoint.Owner == SteamID);
+            wp = Database.waypoints.FirstOrDefault(waypoint => waypoint.Name.ToLower() == name.ToLower() && waypoint.Owner == SteamID);
 
             if (wp != null)
             {
@@ -112,7 +122,14 @@ namespace BloodyPoints.Command
                 {
                     if (TTPCommands.RetriveItemsFromInventory(userModel, out string messageItem))
                     {
-                        Helper.TeleportTo(ctx.Event.SenderUserEntity, PlayerEntity, wp.getLocation());
+                        BuffSystem.BuffPlayer(ctx.Event.SenderCharacterEntity, ctx.Event.SenderUserEntity, Prefabs.Buff_Vampire_Dracula_BloodCurse, 5, false);
+
+                        var action = () =>
+                        {
+                            Helper.TeleportTo(ctx.Event.SenderUserEntity, PlayerEntity, wp.getLocation());
+                        };
+                        
+                        CoroutineHandler.StartGenericCoroutine(action, 5);
                         return;
                     }
                     else
@@ -122,7 +139,12 @@ namespace BloodyPoints.Command
                 }
                 else
                 {
-                    Helper.TeleportTo(ctx.Event.SenderUserEntity, PlayerEntity, wp.getLocation());
+                    var action = () =>
+                    {
+                        Helper.TeleportTo(ctx.Event.SenderUserEntity, PlayerEntity, wp.getLocation());
+                    };
+                    BuffSystem.BuffPlayer(ctx.Event.SenderCharacterEntity, ctx.Event.SenderUserEntity, Prefabs.Buff_Vampire_Dracula_BloodCurse, 5, false);
+                    CoroutineHandler.StartGenericCoroutine(action, 5);
                     return;
                 }
             }
@@ -169,7 +191,7 @@ namespace BloodyPoints.Command
                     }
 
 
-                    var wp = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name == name);
+                    var wp = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name.ToLower() == name.ToLower());
 
                     if (wp != null)
                     {
@@ -184,7 +206,7 @@ namespace BloodyPoints.Command
                         return;
                     }
 
-                    wp = Database.waypoints.FirstOrDefault(waypoint => waypoint.Name == name && waypoint.Owner == SteamID);
+                    wp = Database.waypoints.FirstOrDefault(waypoint => waypoint.Name.ToLower() == name.ToLower() && waypoint.Owner == SteamID);
 
                     if (wp != null)
                     {
@@ -222,7 +244,7 @@ namespace BloodyPoints.Command
 
                 var findName = name + "_" + SteamID;
 
-                var wp = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name == name && waypoint.Owner == SteamID);
+                var wp = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name.ToLower() == name.ToLower() && waypoint.Owner == SteamID);
 
                 if (wp != null)
                 {
@@ -237,7 +259,7 @@ namespace BloodyPoints.Command
                     return;
                 }
 
-                wp = Database.waypoints.FirstOrDefault(waypoint => waypoint.Name == name && waypoint.Owner == SteamID);
+                wp = Database.waypoints.FirstOrDefault(waypoint => waypoint.Name.ToLower() == name.ToLower() && waypoint.Owner == SteamID);
 
                 if (wp != null)
                 {
@@ -277,14 +299,14 @@ namespace BloodyPoints.Command
                 }
             }
 
-            var item = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name == name);
+            var item = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name.ToLower() == name.ToLower());
 
             if (item != null)
             {
                 throw ctx.Error($"A global waypoint with the \"{name}\" name existed. Please rename your waypoint.");
             }
 
-            item = Database.waypoints.FirstOrDefault(waypoint => waypoint.Name == name && waypoint.Owner == SteamID);
+            item = Database.waypoints.FirstOrDefault(waypoint => waypoint.Name.ToLower() == name.ToLower() && waypoint.Owner == SteamID);
 
             if (item != null)
             {
@@ -321,14 +343,14 @@ namespace BloodyPoints.Command
             ulong SteamID = ctx.Event.User.PlatformId;
             var findName = name + "_" + SteamID;
 
-            var item = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name == name);
+            var item = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name.ToLower() == name.ToLower());
 
             if (item != null)
             {
                 throw ctx.Error($"A global waypoint with the \"{name}\" name existed. Please rename your waypoint.");
             }
 
-            item = Database.waypoints.FirstOrDefault(waypoint => waypoint.Name == name);
+            item = Database.waypoints.FirstOrDefault(waypoint => waypoint.Name.ToLower() == name.ToLower());
 
             if (item != null)
             {
@@ -355,7 +377,7 @@ namespace BloodyPoints.Command
         {
             ulong SteamID = ctx.Event.User.PlatformId;
 
-            var item = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name == name);
+            var item = Database.globalWaypoint.FirstOrDefault(waypoint => waypoint.Name.ToLower() == name.ToLower());
 
             if (item != null)
             {
@@ -364,7 +386,7 @@ namespace BloodyPoints.Command
                 return;
             }
 
-            throw ctx.Error($"A global waypoint with the \"{name}\" name existed. Please rename your waypoint.");
+            throw ctx.Error($"There is no global waypoint with the name \"{name}\".");
             
         }
 
@@ -373,7 +395,7 @@ namespace BloodyPoints.Command
         {
             ulong SteamID = ctx.Event.User.PlatformId;
             var findName = name + "_" + SteamID;
-            var item = Database.waypoints.FirstOrDefault(waypoint => waypoint.Name == name);
+            var item = Database.waypoints.FirstOrDefault(waypoint => waypoint.Name.ToLower() == name.ToLower() && waypoint.Owner == SteamID);
 
             if (item != null)
             {
@@ -382,7 +404,7 @@ namespace BloodyPoints.Command
                 return;
             }
 
-            throw ctx.Error($"A global waypoint with the \"{name}\" name existed. Please rename your waypoint.");
+            throw ctx.Error($"There is no waypoint with the name \"{name}\".");
         }
 
         [Command(name: "list", shortHand: "l", adminOnly: false, usage: "", description: "Lists waypoints available to you")]
@@ -391,12 +413,12 @@ namespace BloodyPoints.Command
             int total_wp = 0;
             foreach (var global_wp in Database.globalWaypoint)
             {
-                ctx.Reply($" - <color=#ffff00>{global_wp.Name}</color> [<color=#00dd00>Global</color>]");
+                ctx.Reply($" - <color=#ffff00>[<color=#00dd00>Global</color>] {global_wp.Name}</color>");
                 total_wp++;
             }
-            foreach (var wp in Database.waypoints)
+            foreach (var wp in Database.waypoints.Where(x=>x.Owner == ctx.Event.User.PlatformId))
             {
-                ctx.Reply($" - <color=#ffff00>{wp.Name}</color>");
+                ctx.Reply($" - <color=#ffff00>[<color=#00dd00>{ctx.Event.User.CharacterName}</color>] {wp.Name}</color>");
                 total_wp++;
             }
             if (total_wp == 0) throw ctx.Error("No waypoint available.");

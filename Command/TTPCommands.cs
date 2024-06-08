@@ -1,11 +1,15 @@
-﻿using Bloody.Core.API.v1;
+﻿using Bloodstone.API;
+using Bloody.Core;
+using Bloody.Core.API.v1;
 using Bloody.Core.GameData.v1;
+using Bloody.Core.Helper.v1;
 using Bloody.Core.Methods;
 using Bloody.Core.Models.v1;
 using BloodyPoints.Helpers;
+using Il2CppSystem;
 using ProjectM;
+using ProjectM.Network;
 using Stunlock.Core;
-using System;
 using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -44,9 +48,14 @@ namespace BloodyPoints.Command
                     {
                         if (RetriveItemsFromInventory(Owner, out string messageItem))
                         {
-                            float3 location = Plugin.SystemsCore.EntityManager.GetComponentData<LocalToWorld>(Target.Character.Entity).Position;
-                            Helper.TeleportTo(Owner.Entity, Owner.Character.Entity, location);
-                            ctx.Reply($"Successfully performed teleport towards the player {name}");
+                            var action = () =>
+                            {
+                                float3 location = Plugin.SystemsCore.EntityManager.GetComponentData<LocalToWorld>(Target.Character.Entity).Position;
+                                Helper.TeleportTo(Owner.Entity, Owner.Character.Entity, location);
+                                ctx.Reply($"Successfully teleport the {FontColorChatSystem.White($"{name}")} player to your position.");
+                            };
+                            BuffSystem.BuffPlayer(Owner.Character.Entity, Owner.Entity, Prefabs.Buff_Vampire_Dracula_BloodCurse, 5, false);
+                            CoroutineHandler.StartGenericCoroutine(action, 5);
                         }
                         else
                         {
@@ -54,13 +63,18 @@ namespace BloodyPoints.Command
                         }
                     } else
                     {
-                        float3 location = Plugin.SystemsCore.EntityManager.GetComponentData<LocalToWorld>(Target.Character.Entity).Position;
-                        Helper.TeleportTo(Owner.Entity, Owner.Character.Entity, location);
-                        ctx.Reply($"Successfully performed teleport towards the player {name}");
+                        var action = () =>
+                        {
+                            float3 location = Plugin.SystemsCore.EntityManager.GetComponentData<LocalToWorld>(Target.Character.Entity).Position;
+                            Helper.TeleportTo(Owner.Entity, Owner.Character.Entity, location);
+                            ctx.Reply($"Successfully teleport the {FontColorChatSystem.White($"{name}")} player to your position.");
+                        };
+                        BuffSystem.BuffPlayer(Owner.Character.Entity, Owner.Entity, Prefabs.Buff_Vampire_Dracula_BloodCurse, 5, false);
+                        CoroutineHandler.StartGenericCoroutine(action, 5);
                     }
                 }
 
-            } catch (Exception e)
+            } catch (System.Exception e)
             {
                 throw ctx.Error(e.Message);
             }
@@ -84,9 +98,15 @@ namespace BloodyPoints.Command
                 {
                     if (RetriveItemsFromInventory(Owner, out string message))
                     {
-                        float3 location = Plugin.SystemsCore.EntityManager.GetComponentData<LocalToWorld>(Target.Character.Entity).Position;
-                        Helper.TeleportTo(Owner.Entity, Owner.Character.Entity, location);
-                        ctx.Reply($"Successfully teleport the {FontColorChatSystem.White($"{name}")} player to your position.");
+                        var action = () =>
+                        {
+                            float3 location = Plugin.SystemsCore.EntityManager.GetComponentData<LocalToWorld>(Target.Character.Entity).Position;
+                            Helper.TeleportTo(Owner.Entity, Owner.Character.Entity, location);
+                            ctx.Reply($"Successfully teleport the {FontColorChatSystem.White($"{name}")} player to your position.");
+                        };
+                        BuffSystem.BuffPlayer(Owner.Character.Entity,Owner.Entity, Prefabs.Buff_Vampire_Dracula_BloodCurse,5,false);
+                        BuffSystem.BuffPlayer(Target.Character.Entity, Target.Entity, Prefabs.Buff_Vampire_Dracula_BloodCurse,5,false);
+                        CoroutineHandler.StartGenericCoroutine(action, 5);
                     }
                     else
                     {
@@ -94,18 +114,39 @@ namespace BloodyPoints.Command
                     }
                 } else
                 {
-                    TeleportsRequest.Remove(Owner.CharacterName);
-                    float3 location = Plugin.SystemsCore.EntityManager.GetComponentData<LocalToWorld>(Target.Character.Entity).Position;
-                    Helper.TeleportTo(Owner.Entity, Owner.Character.Entity, location);
-                    ctx.Reply($"Successfully teleport the {FontColorChatSystem.White($"{name}")} player to your position.");
+                    var action = () =>
+                    {
+                        float3 location = Plugin.SystemsCore.EntityManager.GetComponentData<LocalToWorld>(Target.Character.Entity).Position;
+                        Helper.TeleportTo(Owner.Entity, Owner.Character.Entity, location);
+                        ctx.Reply($"Successfully teleport the {FontColorChatSystem.White($"{name}")} player to your position.");
+                    };
+                    BuffSystem.BuffPlayer(Owner.Character.Entity, Owner.Entity, Prefabs.Buff_Vampire_Dracula_BloodCurse, 5, false);
+                    BuffSystem.BuffPlayer(Target.Character.Entity, Target.Entity, Prefabs.Buff_Vampire_Dracula_BloodCurse, 5, false);
+                    CoroutineHandler.StartGenericCoroutine(action, 5);
                 }
             }
-            catch (Exception e)
+            catch (System.Exception e)
             {
                 throw ctx.Error(e.Message);
             }
 
         }
+
+        [Command("cast", description: "Used for debugging", adminOnly: true)]
+        public static void CastCommand(ChatCommandContext ctx, int intprefabGuid)
+        {
+            var prefabGuid = new PrefabGUID(intprefabGuid);
+            var userModel = GameData.Users.GetUserByCharacterName(ctx.Event.User.CharacterName.Value);
+            var fromCharacter = VWorld.Server.EntityManager.GetComponentData<FromCharacter>(userModel.Entity); ;
+            var clientEvent = new CastAbilityServerDebugEvent
+            {
+                AbilityGroup = prefabGuid,
+                AimPosition = new Nullable_Unboxed<float3>(userModel.Entity.Read<EntityInput>().AimPosition),
+                Who = ctx.Event.SenderCharacterEntity.Read<NetworkId>()
+            };
+            Plugin.SystemsCore.DebugEventsSystem.CastAbilityServerDebugEvent(ctx.Event.SenderUserEntity.Read<User>().Index, ref clientEvent, ref fromCharacter);
+        }
+
         internal static bool RequestTeleport(UserModel playerRequest, UserModel playerTarget, out string message)
         {
             if (TeleportsRequest.TryGetValue(playerRequest.CharacterName, out string playerTargetDic))
@@ -123,7 +164,7 @@ namespace BloodyPoints.Command
 
             TeleportsRequest.Add(playerRequest.CharacterName, playerTarget.CharacterName);
 
-            ServerChatUtils.SendSystemMessageToClient(Plugin.SystemsCore.EntityManager, (ProjectM.Network.User)playerTarget.Internals.User, $"{FontColorChatSystem.White($"{playerRequest.CharacterName}")} has asked you to teleport to your position. If you want to accept it write {FontColorChatSystem.White($".blp tpa {playerRequest.CharacterName}")}");
+            ServerChatUtils.SendSystemMessageToClient(Plugin.SystemsCore.EntityManager, (ProjectM.Network.User)playerTarget.Internals.User, $"{FontColorChatSystem.White($"{playerRequest.CharacterName}")} has asked you to teleport to your position. If you want to accept it write {FontColorChatSystem.White($".blp tla {playerRequest.CharacterName}")}");
 
             message = $"The teleport request has been successfully sent to player {FontColorChatSystem.White($"{playerTarget.CharacterName}")}";
             return true;
@@ -144,7 +185,7 @@ namespace BloodyPoints.Command
                     message = messageRequest;
                     return false;
                 }
-            } catch (Exception e)
+            } catch (System.Exception e)
             {
                 message = e.Message;
                 return false;
@@ -201,7 +242,7 @@ namespace BloodyPoints.Command
                 }
                 if (totalItemsRemove > 0)
                 {
-                    message = $"You do not have the necessary amount of items in your inventory to perform this action";
+                    message = $"You do not have the necessary amount of {Plugin.PrefabName.Value} in your inventory to perform this action";
                     AdditemToInventory(playerRequest.CharacterName, prefabGameData.PrefabGUID, Plugin.Amount.Value - totalItemsRemove);
                     return false;
                 }
@@ -209,7 +250,7 @@ namespace BloodyPoints.Command
                 message = $"";
                 return true;
             }
-            catch (Exception e)
+            catch (System.Exception e)
             {
                 message = e.Message;
                 return false;
@@ -235,7 +276,7 @@ namespace BloodyPoints.Command
                 return true;
 
             }
-            catch (Exception error)
+            catch (System.Exception error)
             {
                 Plugin.Logger.LogError($"Error {error.Message}");
                 return false;
